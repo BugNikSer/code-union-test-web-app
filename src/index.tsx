@@ -1,9 +1,6 @@
-import * as React from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client';
-
-const App = () => (<div>
-  <h1>Hello, world!</h1>
-</div>)
+import { App } from './App';
 
 let root: HTMLElement = document.getElementById('root') as HTMLElement;
 
