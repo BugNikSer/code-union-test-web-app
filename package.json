@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build.js",
-    "dev": "npm run build && npx lite-server"
+    "build": "esbuild --bundle --minify --sourcemap src/index.tsx --outfile=build/bundle.js",
+    "start": "esbuild --bundle src/index.tsx --outfile=www/main.js --servedir=www"
   },
   "repository": {
     "type": "git",
