@@ -1,0 +1,31 @@
+{
+  "name": "code-union-test-web-app",
+  "version": "1.0.0",
+  "description": "Test challenge for Code Union",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js",
+    "dev": "npm run build && npx lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BugNikSer/code-union-test-web-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BugNikSer/code-union-test-web-app/issues"
+  },
+  "homepage": "https://github.com/BugNikSer/code-union-test-web-app#readme",
+  "devDependencies": {
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "esbuild": "^0.15.10"
+  }
+}
