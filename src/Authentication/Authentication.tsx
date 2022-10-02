@@ -1,18 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import type { FC } from "react";
 import { useSelector } from "react-redux";
+import { AppBar, Container, Stack } from "@mui/material";
 import { auth } from "../api";
 import type { IStore } from "../redux/types";
+import AppHeader from "../AppHeader";
 
 export const Authenticaction: FC = () => {
-  const authData = useSelector((state: IStore) => state.authentication);
+  const [isLoginModalisplay, setLoginModalDisplay] = useState<boolean>(false);
+  const [isRegisterModalDisplay, setRegisterModalDisplay] =
+    useState<boolean>(false);
+  const { tokens, user } = useSelector((state: IStore) => state.authentication);
 
-  const data = {
-    email: "123@goga.com",
-    password: "youlneverguesit",
-  };
+  // useEffect(() => {
+  //   if (!tokens.accessToken && !tokens.refreshToken) {
+  //     setLoginModalisplays(true);
+  //   }
+  // }, [tokens.accessToken, tokens.refreshToken]);
 
-  auth(data);
+  // const data = {
+  //   email: "123@goga.com",
+  //   password: "youlneverguesit",
+  // };
 
-  return <div>hi</div>;
+  // auth(data);
+
+  return (
+    <Container sx={{ width: "100%", height: "100%" }}>
+      <AppHeader
+        setLoginModalDisplay={setLoginModalDisplay}
+        setRegisterModalDisplay={setRegisterModalDisplay}
+      />
+    </Container>
+  );
 };

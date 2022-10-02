@@ -7,7 +7,7 @@ export const authenticationSlice = createSlice({
       accessToken: null,
       refreshToken: null,
     },
-    data: {
+    user: {
       id: null,
       email: null,
       nickname: null,
@@ -16,9 +16,9 @@ export const authenticationSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       const { id, email, nickname } = action.payload;
-      state.data.id = id;
-      state.data.email = email;
-      state.data.nickname = nickname;
+      state.user.id = id;
+      state.user.email = email;
+      state.user.nickname = nickname;
     },
     auth: (state, action) => {
       const { tokens, user } = action.payload;
@@ -27,16 +27,16 @@ export const authenticationSlice = createSlice({
 
       state.tokens.accessToken = accessToken;
       state.tokens.refreshToken = refreshToken;
-      state.data.id = id;
-      state.data.email = email;
-      state.data.nickname = nickname;
+      state.user.id = id;
+      state.user.email = email;
+      state.user.nickname = nickname;
     },
     logout: (state) => {
       state.tokens.accessToken = null;
       state.tokens.refreshToken = null;
-      state.data.id = null;
-      state.data.email = null;
-      state.data.nickname = null;
+      state.user.id = null;
+      state.user.email = null;
+      state.user.nickname = null;
     },
   },
 });
@@ -46,7 +46,7 @@ export interface IAuthenticationSlice {
     accessToken: null | string;
     refreshToken: null | string;
   };
-  data: {
+  user: {
     id: null | string;
     email: null | string;
     nickname: null | string;

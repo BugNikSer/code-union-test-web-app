@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 const esbuild = require("esbuild");
 const http = require("http");
 
@@ -16,7 +18,7 @@ esbuild
   )
   .then((result) => {
     const { host, port } = result;
-    console.log('Running at', 'http://127.0.0.1:' + port);
+    console.log("Running at http://127.0.0.1:" + port);
 
     http
       .createServer((req, res) => {
@@ -51,10 +53,16 @@ esbuild
               proxyRes.setEncoding("utf8");
               proxyRes.on("data", (chunk) => {
                 const response = JSON.parse(chunk);
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-                res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-                res.setHeader('Access-Control-Allow-Credentials', true);
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader(
+                  "Access-Control-Allow-Methods",
+                  "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+                );
+                res.setHeader(
+                  "Access-Control-Allow-Headers",
+                  "X-Requested-With,content-type"
+                );
+                res.setHeader("Access-Control-Allow-Credentials", true);
                 res.write(JSON.stringify(response));
                 res.end();
               });
