@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild --bundle --minify --sourcemap src/index.tsx --outfile=build/bundle.js",
-    "start": "esbuild --bundle src/index.tsx --outfile=www/main.js --servedir=www"
+    "start": "esbuild --bundle src/index.tsx --outfile=www/main.js --servedir=www",
+    "launch": "node launch.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,7 @@
     "url": "https://github.com/BugNikSer/code-union-test-web-app/issues"
   },
   "homepage": "https://github.com/BugNikSer/code-union-test-web-app#readme",
-  "devDependencies": {
+  "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.7",
@@ -26,18 +27,23 @@
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "esbuild": "^0.15.10",
     "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-import-resolver-typescript": "^3.5.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "http": "^0.0.1-security",
+    "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.4",
     "typescript": "^4.8.4"
-  },
-  "dependencies": {
-    "esbuild": "^0.15.10"
   }
 }
