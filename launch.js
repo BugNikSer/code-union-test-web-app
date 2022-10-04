@@ -3,7 +3,7 @@
 const esbuild = require("esbuild");
 const http = require("http");
 
-// Start esbuild's server on a random local port
+// Start esbuild's server
 esbuild
   .serve(
     {
@@ -17,16 +17,20 @@ esbuild
     }
   )
   .then((result) => {
-    const { host, port } = result;
+    const { port } = result;
     console.log("Running at http://127.0.0.1:" + port);
 
+    // Proxy server
     http
       .createServer((req, res) => {
         const options = {
           path: req.url,
+          headers: req.headers,
           method: req.method,
         };
         let body = "";
+
+        req.set;
 
         req.on("readable", () => {
           const chunk = req.read();
@@ -35,46 +39,61 @@ esbuild
           }
         });
 
-        req.on("end", (e) => {
-          const data = JSON.parse(body);
-
-          const proxyReq = http.request(
-            {
-              hostname: "188.225.83.80",
-              port: "6719",
-              path: options.path,
-              method: options.method,
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
-            (proxyRes) => {
-              console.log(`Proxy ${options.method} request ${options.path}`);
-              proxyRes.setEncoding("utf8");
-              proxyRes.on("data", (chunk) => {
-                const response = JSON.parse(chunk);
-                res.setHeader("Access-Control-Allow-Origin", "*");
-                res.setHeader(
-                  "Access-Control-Allow-Methods",
-                  "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-                );
-                res.setHeader(
-                  "Access-Control-Allow-Headers",
-                  "X-Requested-With,content-type"
-                );
-                res.setHeader("Access-Control-Allow-Credentials", true);
-                res.write(JSON.stringify(response));
-                res.end();
-              });
+        req.on("end", () => {
+          if (options.method !== "OPTIONS") {
+            let data;
+            try {
+              data = JSON.parse(body);
+            } catch (e) {
+              data = null;
             }
-          );
 
-          proxyReq.on("error", (e) => {
-            console.error(`problem with request: ${e.message}`);
-          });
+            const proxyHeaders = {};
+            if (options.headers["content-type"]) {
+              proxyHeaders["content-type"] = options.headers["content-type"];
+            }
+            if (options.headers["authorization"]) {
+              proxyHeaders["authorization"] = options.headers["authorization"];
+            }
 
-          proxyReq.write(JSON.stringify(data));
-          proxyReq.end();
+            const proxyReq = http.request(
+              {
+                hostname: "188.225.83.80",
+                port: "6719",
+                path: options.path,
+                method: options.method,
+                headers: proxyHeaders,
+              },
+              (proxyRes) => {
+                console.log(`Proxy ${options.method} request ${options.path}`);
+                proxyRes.setEncoding("utf8");
+                proxyRes.on("data", (chunk) => {
+                  const response = JSON.parse(chunk);
+                  res.setHeader("Access-Control-Allow-Origin", "*");
+                  res.setHeader("Access-Control-Allow-Methods", "*");
+                  res.setHeader("Access-Control-Allow-Headers", "*");
+                  res.write(JSON.stringify(response));
+                  res.end();
+                });
+                proxyRes.on("error", (error) => {
+                  console.log(error);
+                });
+              }
+            );
+
+            proxyReq.on("error", (e) => {
+              console.error(`problem with request: ${e.message}`);
+            });
+
+            if (data) proxyReq.write(JSON.stringify(data));
+            proxyReq.end();
+          } else {
+            console.log("skip OPTIONS request");
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Methods", "*");
+            res.setHeader("Access-Control-Allow-Headers", "*");
+            res.end();
+          }
         });
       })
       .listen(3000);

@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild --bundle --minify --sourcemap src/index.tsx --outfile=build/bundle.js",
-    "start": "esbuild --bundle src/index.tsx --outfile=www/main.js --servedir=www",
-    "launch": "node launch.js"
+    "start": "node launch.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +21,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@mui/lab": "^5.0.0-alpha.102",
     "@mui/material": "^5.10.7",
     "@reduxjs/toolkit": "^1.8.5",
     "@types/react": "^18.0.21",
@@ -39,6 +39,7 @@
     "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "fetch": "^1.1.0",
     "futura-font": "^1.0.0",
     "http": "^0.0.1-security",
     "prettier": "^2.7.1",
@@ -46,5 +47,8 @@
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.4",
     "typescript": "^4.8.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.8.1"
   }
 }

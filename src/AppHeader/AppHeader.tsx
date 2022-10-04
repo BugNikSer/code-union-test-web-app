@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { FC, ChangeEvent } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   AppBar,
-  Box,
   Button,
   Stack,
   TextField,
@@ -11,8 +10,10 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { setSearch } from "./searchSlice";
+import { setKeyword, setError, setIsLoading, addResult } from "./searchSlice";
 import type { IStore } from "../redux/types";
+import { getAllRestaurants } from "../api";
+import { store } from "../redux/store";
 
 interface AppHeaderProps {
   setLoginModalDisplay: (isDisplay: boolean) => void;
@@ -26,10 +27,38 @@ export const AppHeader: FC<AppHeaderProps> = ({
   const theme = useTheme();
   const greyColor = theme.palette.grey[400];
   const dispatch = useDispatch();
-  const { value } = useSelector((state: IStore) => state.search);
+  const { keyword, page, perPage } = useSelector(
+    (state: IStore) => state.search
+  );
+  const { tokens } = useSelector((state: IStore) => state.authentication);
+
+  // useEffect(() => {
+  //   getAllRestaurants({
+  //     req: { keyword, page, perPage },
+  //     token: tokens.accessToken || "",
+  //   })
+  //     .then((res) => {
+  //       console.log("result");
+  //       console.log(res);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Custom error catch");
+  //       console.error(error);
+  //     });
+  // }, [tokens.accessToken]);
+
+  const handleSearchBtnClick = () => {
+    getAllRestaurants({
+      req: { keyword, page, perPage },
+      token: tokens.accessToken || "",
+    }).then((res) => {
+      console.log("result");
+      console.log(res);
+    });
+  };
 
   return (
-    <AppBar>
+    <AppBar sx={{ position: "relative" }}>
       <Toolbar
         sx={{
           bgcolor: theme.palette.common.white,
@@ -93,12 +122,16 @@ export const AppHeader: FC<AppHeaderProps> = ({
               width: "50%",
             }}
             placeholder="Город, адрес, шоссе или ЖК"
-            value={value}
+            value={keyword}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              dispatch(setSearch(event.target.value));
+              dispatch(setKeyword(event.target.value));
             }}
           />
-          <Button variant="contained" size="large">
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleSearchBtnClick}
+          >
             Найти
           </Button>
         </Stack>

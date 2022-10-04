@@ -8,14 +8,31 @@ const baseUrl = "http://localhost:3000/api/v1";
 //   })
 //   .catch((e) => console.error(e));
 
-export const auth = (data: { email: string; password: string }) => {
-  fetch(baseUrl + "/auth/login", {
+export interface ILoginProps {
+  nickname?: string;
+  email?: string;
+  password: string;
+}
+
+export const auth = async (data: {
+  email?: string;
+  nickname?: string;
+  password: string;
+}) => {
+  return fetch(baseUrl + "/auth/login", {
     method: "POST",
     body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
   })
     .then((res) => res.json())
-    .then((res) => console.log(res))
-    .catch((e) => console.error(e));
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => {
+      return e;
+    });
 };
 
 export const register = (data: {
@@ -34,5 +51,57 @@ export const register = (data: {
     })
     .catch((e) => {
       console.error(e);
+    });
+};
+
+interface IGetAllRestaurantsReqParams {
+  page: number;
+  perPage: number;
+  keyword: string;
+}
+
+export interface IGetAllRestaurantsParams {
+  req: IGetAllRestaurantsReqParams;
+  token?: string;
+}
+export const getAllRestaurants = async (params: IGetAllRestaurantsParams) => {
+  console.log("fetching restaurants");
+  let getParams = "";
+  const { req, token } = params;
+
+  // Формирование строки с параметрами GET запроса
+  if (req) {
+    getParams = Object.keys(req)
+      .reduce((result: string[], key: string) => {
+        const value: number | string = req[
+          key as keyof IGetAllRestaurantsReqParams
+        ] as number | string;
+        if (key !== "keyword" || (key === "keyword" && value !== ""))
+          result.push(`${key}=${value}`);
+        return result;
+      }, [])
+      .join("&");
+  }
+
+  const url =
+    baseUrl +
+    "/restaurants/all" +
+    (getParams.length > 0 ? "?" + getParams : "");
+
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log("fetch res", res);
+      return res;
+    })
+    .catch((error) => {
+      console.log("fetch error", error);
+      return error;
     });
 };

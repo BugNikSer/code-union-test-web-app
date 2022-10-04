@@ -32,12 +32,5 @@ export const theme = createTheme({
         },
       },
     },
-    // MuiTextField: {
-    //   styleOverrides: {
-    //     root: {
-    //       borderRadius: "20px",
-    //     },
-    //   },
-    // },
   },
 });

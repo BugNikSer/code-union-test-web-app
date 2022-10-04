@@ -20,16 +20,11 @@ export const authenticationSlice = createSlice({
       state.user.email = email;
       state.user.nickname = nickname;
     },
-    auth: (state, action) => {
-      const { tokens, user } = action.payload;
-      const { accessToken, refreshToken } = tokens;
-      const { id, email, nickname } = user;
+    setTokens: (state, action) => {
+      const { accessToken, refreshToken } = action.payload;
 
       state.tokens.accessToken = accessToken;
       state.tokens.refreshToken = refreshToken;
-      state.user.id = id;
-      state.user.email = email;
-      state.user.nickname = nickname;
     },
     logout: (state) => {
       state.tokens.accessToken = null;
@@ -53,5 +48,5 @@ export interface IAuthenticationSlice {
   };
 }
 
-export const { auth, setUser, logout } = authenticationSlice.actions;
+export const { setTokens, setUser, logout } = authenticationSlice.actions;
 export default authenticationSlice.reducer;
