@@ -35,22 +35,27 @@ export const auth = async (data: {
     });
 };
 
-export const register = (data: {
+export interface IRegisterProps {
   email: string;
   nickname: string;
   phone: string;
   password: string;
-}) => {
-  fetch(baseUrl + "/auth/registration/customer/new", {
+}
+
+export const register = async (data: IRegisterProps) => {
+  return fetch(baseUrl + "/auth/registration/customer/new", {
     method: "POST",
     body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
+      return res;
     })
     .catch((e) => {
-      console.error(e);
+      return e;
     });
 };
 

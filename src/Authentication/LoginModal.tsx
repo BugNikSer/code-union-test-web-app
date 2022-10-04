@@ -15,6 +15,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { TransitionProps } from "@mui/material/transitions";
 import { auth } from "../api";
 import type { ILoginProps } from "../api";
 
@@ -23,8 +24,6 @@ interface ILoginModalProps {
   setLoginModalDisplay: (isDisplay: boolean) => void;
   setRegisterModalDisplay: (isDisplay: boolean) => void;
 }
-
-import { TransitionProps } from "@mui/material/transitions";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -46,7 +45,6 @@ export const LoginModal: FC<ILoginModalProps> = ({
   // Состояния запроса
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const isLoginEmail = login && login.match(/^[\w-.]+@([\w-.]+\.)+[\w-]{2,4}$/);
   // Утилиты
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -79,6 +77,9 @@ export const LoginModal: FC<ILoginModalProps> = ({
         setLoading(false);
       });
   };
+
+  // Соответствует ли логин формату email
+  const isLoginEmail = login && login.match(/^[\w-.]+@([\w-.]+\.)+[\w-]{2,4}$/);
 
   return (
     <Dialog
