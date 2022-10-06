@@ -16,14 +16,21 @@ import { RegisterModal } from "./RegistrationModal";
 // };
 
 export const Authenticaction: FC = () => {
-  const [isLoginModalisplay, setLoginModalDisplay] = useState<boolean>(true);
+  const [isLoginModalDisplay, setLoginModalDisplay] = useState<boolean>(true);
   const [isRegisterModalDisplay, setRegisterModalDisplay] =
     useState<boolean>(false);
   const { user } = useSelector((state: IStore) => state.authentication);
   const { id } = user;
 
   return (
-    <Container sx={{ width: "100%", height: "100%", padding: "0!important" }}>
+    <Container
+      sx={{
+        width: "100%",
+        height: "100%",
+        padding: "0!important",
+        maxWidth: "unset!important",
+      }}
+    >
       <AppHeader
         setLoginModalDisplay={setLoginModalDisplay}
         setRegisterModalDisplay={setRegisterModalDisplay}
@@ -36,7 +43,7 @@ export const Authenticaction: FC = () => {
         </Stack>
       )}
       <LoginModal
-        isLoginModalisplay={isLoginModalisplay}
+        isLoginModalDisplay={isLoginModalDisplay}
         setLoginModalDisplay={setLoginModalDisplay}
         setRegisterModalDisplay={setRegisterModalDisplay}
       />

@@ -9,18 +9,21 @@ import {
   DialogContent,
   FormControl,
   FormHelperText,
+  InputAdornment,
   Slide,
   Stack,
   TextField,
   useTheme,
+  Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { TransitionProps } from "@mui/material/transitions";
+import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import { auth } from "../api";
 import type { ILoginProps } from "../api";
 
 interface ILoginModalProps {
-  isLoginModalisplay: boolean;
+  isLoginModalDisplay: boolean;
   setLoginModalDisplay: (isDisplay: boolean) => void;
   setRegisterModalDisplay: (isDisplay: boolean) => void;
 }
@@ -35,13 +38,14 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export const LoginModal: FC<ILoginModalProps> = ({
-  isLoginModalisplay,
+  isLoginModalDisplay,
   setLoginModalDisplay,
   setRegisterModalDisplay,
 }) => {
   // Хранение полей ввода
   const [login, setLogin] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
+  const [isPasswordMasked, setPasswordMasked] = useState<boolean>(true);
   // Состояния запроса
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,13 +87,21 @@ export const LoginModal: FC<ILoginModalProps> = ({
 
   return (
     <Dialog
-      open={isLoginModalisplay}
+      open={isLoginModalDisplay}
       onClose={() => setLoginModalDisplay(false)}
       TransitionComponent={Transition}
     >
-      <DialogTitle>Войти</DialogTitle>
+      <DialogTitle
+        textAlign="center"
+        variant="h5"
+        fontWeight="bold"
+        letterSpacing={1}
+      >
+        Войти
+      </DialogTitle>
       <DialogContent>
         <Stack sx={{ pt: "20px!important" }} spacing={1}>
+          {/* email */}
           <FormControl error={login !== null && login.length === 0}>
             <TextField
               color="info"
@@ -107,15 +119,40 @@ export const LoginModal: FC<ILoginModalProps> = ({
                 : ""}
             </FormHelperText>
           </FormControl>
+          {/* password */}
           <FormControl error={password !== null && password.length === 0}>
             <TextField
-              color="info"
+              /* eslint-disable indent*/
+              color={
+                password === null
+                  ? "info"
+                  : password.length < 8
+                  ? "error"
+                  : "success"
+              }
+              /* eslint-enable indent*/
               required
               value={password || ""}
               label="Пароль"
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setPassword(event.target.value);
                 setError(null);
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ cursor: "pointer" }}>
+                    {isPasswordMasked ? (
+                      <VisibilityOffOutlined
+                        onClick={() => setPasswordMasked(false)}
+                      />
+                    ) : (
+                      <VisibilityOutlined
+                        onClick={() => setPasswordMasked(true)}
+                      />
+                    )}
+                  </InputAdornment>
+                ),
+                type: isPasswordMasked ? "password" : "text",
               }}
             />
             <FormHelperText>
@@ -127,6 +164,7 @@ export const LoginModal: FC<ILoginModalProps> = ({
               {error || ""}
             </FormHelperText>
           </FormControl>
+          {/* login */}
           <LoadingButton
             disabled={
               login === null ||
@@ -140,6 +178,7 @@ export const LoginModal: FC<ILoginModalProps> = ({
           >
             Войти
           </LoadingButton>
+          {/* go to register */}
           <Button
             size="small"
             onClick={() => {

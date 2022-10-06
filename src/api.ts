@@ -14,11 +14,7 @@ export interface ILoginProps {
   password: string;
 }
 
-export const auth = async (data: {
-  email?: string;
-  nickname?: string;
-  password: string;
-}) => {
+export const auth = async (data: ILoginProps) => {
   return fetch(baseUrl + "/auth/login", {
     method: "POST",
     body: JSON.stringify(data),

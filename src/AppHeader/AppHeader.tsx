@@ -13,7 +13,7 @@ import {
 import { setKeyword, setError, setIsLoading, addResult } from "./searchSlice";
 import type { IStore } from "../redux/types";
 import { getAllRestaurants } from "../api";
-import { store } from "../redux/store";
+import { ProfileMini } from "./ProfileMini";
 
 interface AppHeaderProps {
   setLoginModalDisplay: (isDisplay: boolean) => void;
@@ -24,29 +24,31 @@ export const AppHeader: FC<AppHeaderProps> = ({
   setLoginModalDisplay,
   setRegisterModalDisplay,
 }) => {
+  // утилиты
   const theme = useTheme();
-  const greyColor = theme.palette.grey[400];
   const dispatch = useDispatch();
+  // редакс
+  const { tokens, user } = useSelector((state: IStore) => state.authentication);
   const { keyword, page, perPage } = useSelector(
     (state: IStore) => state.search
   );
-  const { tokens } = useSelector((state: IStore) => state.authentication);
+  // цвет из темы
+  const greyColor = theme.palette.grey[400];
 
-  // useEffect(() => {
-  //   getAllRestaurants({
-  //     req: { keyword, page, perPage },
-  //     token: tokens.accessToken || "",
-  //   })
-  //     .then((res) => {
-  //       console.log("result");
-  //       console.log(res);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Custom error catch");
-  //       console.error(error);
-  //     });
-  // }, [tokens.accessToken]);
+  // автозапрос при входе
+  useEffect(() => {
+    if (user.id) {
+      getAllRestaurants({
+        req: { keyword, page, perPage },
+        token: tokens.accessToken || "",
+      }).then((res) => {
+        console.log("result");
+        console.log(res);
+      });
+    }
+  }, [user.id]);
 
+  // обработчик
   const handleSearchBtnClick = () => {
     getAllRestaurants({
       req: { keyword, page, perPage },
@@ -59,6 +61,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
 
   return (
     <AppBar sx={{ position: "relative" }}>
+      {/* Header */}
       <Toolbar
         sx={{
           bgcolor: theme.palette.common.white,
@@ -69,23 +72,12 @@ export const AppHeader: FC<AppHeaderProps> = ({
         <Typography sx={{ flex: 1, color: greyColor }} variant="h6">
           Главная
         </Typography>
-        <Button
-          variant="text"
-          onClick={() => {
-            setRegisterModalDisplay(true);
-          }}
-        >
-          Регистрация
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            setLoginModalDisplay(true);
-          }}
-        >
-          Войти
-        </Button>
+        <ProfileMini
+          setLoginModalDisplay={setLoginModalDisplay}
+          setRegisterModalDisplay={setRegisterModalDisplay}
+        />
       </Toolbar>
+      {/* Search */}
       <Stack
         sx={{
           width: "90vw",
