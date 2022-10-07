@@ -1,7 +1,7 @@
 import React from "react";
 import type { FC } from "react";
 import { useSelector } from "react-redux";
-import { Stack } from "@mui/material";
+import { Alert, Backdrop, CircularProgress, Stack } from "@mui/material";
 import type { IStore } from "../redux/types";
 import { RestaurantCard } from "./RestaurantCard";
 
@@ -10,20 +10,32 @@ export const RestaurantsContainer: FC = () => {
     (state: IStore) => state.search
   );
 
+  console.log(error);
+
   return (
-    <Stack>
+    <Stack
+      direction="row"
+      spacing={2}
+      sx={{ p: 2, pr: 4, pl: 4, rowGap: 2 }}
+      justifyContent="center"
+    >
       {result ? (
-        <Stack>
+        <>
           {result.map((restaurant) => (
             <RestaurantCard
               key={`restaurant-card-${restaurant.id}`}
               restaurant={restaurant}
             />
           ))}
-        </Stack>
+        </>
+      ) : error ? (
+        <Alert severity="error">{error.toString()}</Alert>
       ) : (
         ""
       )}
+      <Backdrop open={isLoading}>
+        <CircularProgress />
+      </Backdrop>
     </Stack>
   );
 };

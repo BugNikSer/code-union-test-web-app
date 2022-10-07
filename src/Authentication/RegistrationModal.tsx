@@ -22,6 +22,7 @@ import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import { register } from "../api";
 import type { IRegisterProps } from "../api";
 import { TransitionProps } from "@mui/material/transitions";
+import { setRefreshToCookies } from "./tools";
 
 interface IRegisterModalProps {
   isRegisterModalDisplay: boolean;
@@ -77,6 +78,7 @@ export const RegisterModal: FC<IRegisterModalProps> = ({
         if (Object.keys(res).includes("tokens")) {
           dispatch(setTokens(res.tokens));
           dispatch(setUser(res.user));
+          setRefreshToCookies(res.tokens.refreshToken);
           setRegisterModalDisplay(false);
         } else {
           setError(res.message);

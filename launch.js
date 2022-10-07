@@ -65,18 +65,23 @@ esbuild
                 headers: proxyHeaders,
               },
               (proxyRes) => {
+                let proxyData = "";
                 console.log(`Proxy ${options.method} request ${options.path}`);
                 proxyRes.setEncoding("utf8");
                 proxyRes.on("data", (chunk) => {
-                  const response = JSON.parse(chunk);
+                  console.log("data", chunk);
+                  proxyData += chunk;
+                });
+                proxyRes.on("error", (error) => {
+                  console.log(error);
+                });
+                proxyRes.on("end", () => {
+                  const response = JSON.parse(proxyData);
                   res.setHeader("Access-Control-Allow-Origin", "*");
                   res.setHeader("Access-Control-Allow-Methods", "*");
                   res.setHeader("Access-Control-Allow-Headers", "*");
                   res.write(JSON.stringify(response));
                   res.end();
-                });
-                proxyRes.on("error", (error) => {
-                  console.log(error);
                 });
               }
             );

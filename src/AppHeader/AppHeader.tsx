@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import type { FC, ChangeEvent } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -10,7 +10,13 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { setKeyword, setError, setIsLoading, addResult } from "./searchSlice";
+import {
+  setKeyword,
+  setError,
+  setIsLoading,
+  addResult,
+  setPage,
+} from "./searchSlice";
 import type { IStore } from "../redux/types";
 import { getAllRestaurants } from "../api";
 import { ProfileMini } from "./ProfileMini";
@@ -29,35 +35,32 @@ export const AppHeader: FC<AppHeaderProps> = ({
   const dispatch = useDispatch();
   // редакс
   const { tokens, user } = useSelector((state: IStore) => state.authentication);
-  const { keyword, page, perPage } = useSelector(
+  const { keyword, nextPage, perPage } = useSelector(
     (state: IStore) => state.search
   );
   // цвет из темы
   const greyColor = theme.palette.grey[400];
 
+  function fetchRestaurants() {
+    dispatch(setIsLoading());
+    getAllRestaurants({
+      req: { keyword, nextPage, perPage },
+      token: tokens.accessToken || "",
+    }).then((res) => {
+      if (res.restaurants) {
+        dispatch(addResult(res.restaurants));
+      } else {
+        dispatch(setError(res.message));
+      }
+    });
+  }
+
   // автозапрос при входе
   useEffect(() => {
     if (user.id) {
-      getAllRestaurants({
-        req: { keyword, page, perPage },
-        token: tokens.accessToken || "",
-      }).then((res) => {
-        console.log("result");
-        console.log(res);
-      });
+      fetchRestaurants();
     }
   }, [user.id]);
-
-  // обработчик
-  const handleSearchBtnClick = () => {
-    getAllRestaurants({
-      req: { keyword, page, perPage },
-      token: tokens.accessToken || "",
-    }).then((res) => {
-      console.log("result");
-      console.log(res);
-    });
-  };
 
   return (
     <AppBar sx={{ position: "relative" }}>
@@ -119,11 +122,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
               dispatch(setKeyword(event.target.value));
             }}
           />
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleSearchBtnClick}
-          >
+          <Button variant="contained" size="large" onClick={fetchRestaurants}>
             Найти
           </Button>
         </Stack>

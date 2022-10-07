@@ -1,13 +1,6 @@
 const baseUrl = "http://localhost:3000/api/v1";
 // const baseUrl = "/api/v1";
 
-// export const getProfile = () => fetch(baseUrl + "login/profile")
-//   .then((res) => res.json())
-//   .then((res) => {
-//     console.log(res);
-//   })
-//   .catch((e) => console.error(e));
-
 export interface ILoginProps {
   nickname?: string;
   email?: string;
@@ -55,8 +48,41 @@ export const register = async (data: IRegisterProps) => {
     });
 };
 
+export const refreshToken = async (refreshToken: string) => {
+  return fetch(baseUrl + "/auth/login/refresh", {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => {
+      return e;
+    });
+};
+
+export const getProfile = async (accessToke: string) => {
+  return fetch(baseUrl + "/auth/login/profile", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToke}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => {
+      return e;
+    });
+};
+
 interface IGetAllRestaurantsReqParams {
-  page: number;
+  nextPage: number;
   perPage: number;
   keyword: string;
 }
@@ -65,8 +91,8 @@ export interface IGetAllRestaurantsParams {
   req: IGetAllRestaurantsReqParams;
   token?: string;
 }
+
 export const getAllRestaurants = async (params: IGetAllRestaurantsParams) => {
-  console.log("fetching restaurants");
   let getParams = "";
   const { req, token } = params;
 
@@ -98,11 +124,9 @@ export const getAllRestaurants = async (params: IGetAllRestaurantsParams) => {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("fetch res", res);
       return res;
     })
     .catch((error) => {
-      console.log("fetch error", error);
       return error;
     });
 };

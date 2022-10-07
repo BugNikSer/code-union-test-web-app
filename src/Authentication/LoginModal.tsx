@@ -14,13 +14,13 @@ import {
   Stack,
   TextField,
   useTheme,
-  Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { TransitionProps } from "@mui/material/transitions";
 import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import { auth } from "../api";
 import type { ILoginProps } from "../api";
+import { setRefreshToCookies } from "./tools";
 
 interface ILoginModalProps {
   isLoginModalDisplay: boolean;
@@ -69,6 +69,7 @@ export const LoginModal: FC<ILoginModalProps> = ({
         if (Object.keys(res).includes("tokens")) {
           dispatch(setTokens(res.tokens));
           dispatch(setUser(res.user));
+          setRefreshToCookies(res.tokens.refreshToken);
           setLoginModalDisplay(false);
         } else {
           setError(res.message);

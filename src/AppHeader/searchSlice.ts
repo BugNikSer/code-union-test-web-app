@@ -6,7 +6,7 @@ export const searchSlice = createSlice({
   name: "search",
   initialState: {
     keyword: "",
-    page: 0,
+    nextPage: 1,
     perPage: 10,
     result: [] as IRestaurant[] | null,
     error: null as Error | null,
@@ -17,7 +17,7 @@ export const searchSlice = createSlice({
       state.keyword = action.payload;
     },
     setPage: (state, action: PayloadAction<number>) => {
-      state.page = action.payload;
+      state.nextPage = action.payload;
     },
     setPerPage: (state, action: PayloadAction<number>) => {
       state.perPage = action.payload;
@@ -28,6 +28,7 @@ export const searchSlice = createSlice({
       state.result = state.result
         ? [...state.result, ...action.payload]
         : action.payload;
+      state.nextPage = state.nextPage + 1;
     },
     setIsLoading: (state) => {
       state.isLoading = true;
@@ -43,7 +44,7 @@ export const searchSlice = createSlice({
 
 export interface ISearchSlice {
   keyword: string;
-  page: number;
+  nextPage: number;
   perPage: number;
   result: IRestaurant[] | null;
   error: Error | null;
