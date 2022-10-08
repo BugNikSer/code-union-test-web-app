@@ -12,7 +12,7 @@ import { RegisterModal } from "./RegistrationModal";
 import { setRefreshToCookies } from "../tools";
 
 export const Authenticaction: FC = () => {
-  const { user, tokens } = useSelector((state: IStore) => state.authentication);
+  const { user } = useSelector((state: IStore) => state.authentication);
   const { id } = user;
   const [isLoginModalDisplay, setLoginModalDisplay] = useState<boolean>(true);
   const [isRegisterModalDisplay, setRegisterModalDisplay] =
