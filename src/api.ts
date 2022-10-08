@@ -82,7 +82,7 @@ export const getProfile = async (accessToke: string) => {
 };
 
 interface IGetAllRestaurantsReqParams {
-  nextPage: number;
+  page: number;
   perPage: number;
   keyword: string;
 }
@@ -128,5 +128,45 @@ export const getAllRestaurants = async (params: IGetAllRestaurantsParams) => {
     })
     .catch((error) => {
       return error;
+    });
+};
+
+export const likeRestaurant = async (
+  restaurant_id: number,
+  accessToke: string
+) => {
+  return fetch(baseUrl + "/likes/new", {
+    method: "POST",
+    body: JSON.stringify({ restaurant_id }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToke}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => {
+      return e;
+    });
+};
+
+export const dislikeRestaurant = async (
+  restaurant_id: number,
+  accessToke: string
+) => {
+  return fetch(baseUrl + "/likes/" + restaurant_id.toString(), {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToke}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => {
+      return e;
     });
 };

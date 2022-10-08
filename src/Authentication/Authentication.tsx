@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { FC } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Container, Stack, Typography, useTheme } from "@mui/material";
+import { Container } from "@mui/material";
 import { refreshToken, getProfile } from "../api";
 import { setTokens, setUser } from "./AuthenticationSlice";
 import type { IStore } from "../redux/types";
@@ -9,36 +9,69 @@ import AppHeader from "../AppHeader";
 import RestaurantsContainer from "../Restaurants";
 import { LoginModal } from "./LoginModal";
 import { RegisterModal } from "./RegistrationModal";
-import { setRefreshToCookies } from "./tools";
+import { setRefreshToCookies } from "../tools";
 
 export const Authenticaction: FC = () => {
-  const { user } = useSelector((state: IStore) => state.authentication);
+  const { user, tokens } = useSelector((state: IStore) => state.authentication);
   const { id } = user;
   const [isLoginModalDisplay, setLoginModalDisplay] = useState<boolean>(true);
   const [isRegisterModalDisplay, setRegisterModalDisplay] =
     useState<boolean>(false);
+  const [refreshTimeout, setRefreshTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   const dispatch = useDispatch();
-  const theme = useTheme();
 
+  function fetchRefresh() {
+    // токен из cookies
+    const token = document.cookie;
+
+    if (token) {
+      refreshToken(token).then((tokensRes) => {
+        // если токены пришли
+        if (tokensRes.tokens) {
+          // запись в cookies
+          setRefreshToCookies(tokensRes.tokens.refreshToken);
+          // запись в редакс
+          dispatch(setTokens(tokensRes.tokens));
+
+          // очистка таймера
+          if (refreshTimeout) {
+            clearTimeout(refreshTimeout);
+          }
+
+          // silent-refresh каждые 14 минут
+          setRefreshTimeout(
+            setTimeout(() => {
+              fetchRefresh();
+            }, 14 * 60000)
+          );
+
+          // запрос данных пользователя
+          getProfile(tokensRes.tokens.accessToken).then((userRes) => {
+            if (userRes.id) {
+              dispatch(setUser(userRes));
+            }
+          });
+        } else {
+          console.error(tokensRes);
+        }
+      });
+    }
+  }
+
+  // логин по refreshToken при открытии
   useEffect(() => {
     if (!id) {
-      const token = document.cookie;
-      if (token) {
-        refreshToken(token).then((tokensRes) => {
-          if (tokensRes.tokens) {
-            setRefreshToCookies(tokensRes.tokens.refreshToken);
-
-            dispatch(setTokens(tokensRes.tokens));
-            getProfile(tokensRes.tokens.accessToken).then((userRes) => {
-              if (userRes.id) {
-                dispatch(setUser(userRes));
-              }
-            });
-          }
-        });
-      }
+      fetchRefresh();
     }
+
+    return () => {
+      if (refreshTimeout) {
+        clearTimeout(refreshTimeout);
+      }
+    };
   }, [id]);
 
   return (
@@ -48,20 +81,13 @@ export const Authenticaction: FC = () => {
         height: "100%",
         padding: "0!important",
         maxWidth: "unset!important",
-        bgcolor: theme.palette.grey[100],
       }}
     >
       <AppHeader
         setLoginModalDisplay={setLoginModalDisplay}
         setRegisterModalDisplay={setRegisterModalDisplay}
       />
-      {id ? (
-        <RestaurantsContainer />
-      ) : (
-        <Stack sx={{ alignItems: "center", justifyContent: "center", mt: 2 }}>
-          <Typography>Войдите или зарегистрируйтесь</Typography>
-        </Stack>
-      )}
+      <RestaurantsContainer />
       <LoginModal
         isLoginModalDisplay={isLoginModalDisplay && id === null}
         setLoginModalDisplay={setLoginModalDisplay}

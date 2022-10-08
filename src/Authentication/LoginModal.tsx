@@ -20,7 +20,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import { auth } from "../api";
 import type { ILoginProps } from "../api";
-import { setRefreshToCookies } from "./tools";
+import { setRefreshToCookies } from "../tools";
 
 interface ILoginModalProps {
   isLoginModalDisplay: boolean;

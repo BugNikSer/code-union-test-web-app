@@ -1,20 +1,22 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import type { FC, ChangeEvent } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   AppBar,
   Button,
+  InputAdornment,
   Stack,
   TextField,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
+import { Search } from "@mui/icons-material";
 import {
   setKeyword,
   setError,
   setIsLoading,
-  addResult,
+  setRestaurants,
   setPage,
 } from "./searchSlice";
 import type { IStore } from "../redux/types";
@@ -34,33 +36,12 @@ export const AppHeader: FC<AppHeaderProps> = ({
   const theme = useTheme();
   const dispatch = useDispatch();
   // редакс
-  const { tokens, user } = useSelector((state: IStore) => state.authentication);
-  const { keyword, nextPage, perPage } = useSelector(
+  // const { tokens, user } = useSelector((state: IStore) => state.authentication);
+  const { keyword /*, page, perPage*/ } = useSelector(
     (state: IStore) => state.search
   );
   // цвет из темы
   const greyColor = theme.palette.grey[400];
-
-  function fetchRestaurants() {
-    dispatch(setIsLoading());
-    getAllRestaurants({
-      req: { keyword, nextPage, perPage },
-      token: tokens.accessToken || "",
-    }).then((res) => {
-      if (res.restaurants) {
-        dispatch(addResult(res.restaurants));
-      } else {
-        dispatch(setError(res.message));
-      }
-    });
-  }
-
-  // автозапрос при входе
-  useEffect(() => {
-    if (user.id) {
-      fetchRestaurants();
-    }
-  }, [user.id]);
 
   return (
     <AppBar sx={{ position: "relative" }}>
@@ -95,7 +76,6 @@ export const AppHeader: FC<AppHeaderProps> = ({
           Найти лучшее предложение от ресторана
         </Typography>
         <Stack
-          direction="row"
           sx={{
             alignItems: "center",
             justifyContent: "space-between",
@@ -114,17 +94,24 @@ export const AppHeader: FC<AppHeaderProps> = ({
             variant="outlined"
             sx={{
               bgcolor: theme.palette.common.white,
-              width: "50%",
+              width: "100%",
             }}
             placeholder="Город, адрес, шоссе или ЖК"
             value={keyword}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               dispatch(setKeyword(event.target.value));
             }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
           />
-          <Button variant="contained" size="large" onClick={fetchRestaurants}>
+          {/* <Button variant="contained" size="large" onClick={fetchRestaurants}>
             Найти
-          </Button>
+          </Button> */}
         </Stack>
       </Stack>
     </AppBar>

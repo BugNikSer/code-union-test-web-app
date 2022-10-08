@@ -12,8 +12,10 @@ esbuild
     },
     {
       bundle: true,
+      minify: true,
       entryPoints: ["src/index.tsx"],
       outfile: "www/main.js",
+      sourcemap: true,
     }
   )
   .then((result) => {
@@ -69,7 +71,6 @@ esbuild
                 console.log(`Proxy ${options.method} request ${options.path}`);
                 proxyRes.setEncoding("utf8");
                 proxyRes.on("data", (chunk) => {
-                  console.log("data", chunk);
                   proxyData += chunk;
                 });
                 proxyRes.on("error", (error) => {

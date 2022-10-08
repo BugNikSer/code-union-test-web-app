@@ -13,6 +13,8 @@ import {
 import { AccountCircle, Close } from "@mui/icons-material";
 import { theme } from "../theme";
 import { logout } from "../Authentication/AuthenticationSlice";
+import { setRestaurants, setPage } from "./searchSlice";
+import { setRefreshToCookies } from "../tools";
 
 interface IProfileMiniProps {
   setLoginModalDisplay: (isDisplay: boolean) => void;
@@ -23,7 +25,7 @@ export const ProfileMini: FC<IProfileMiniProps> = ({
   setLoginModalDisplay,
   setRegisterModalDisplay,
 }) => {
-  const [modalAnchorEl, setModalAnchorEl] = useState<SVGSVGElement | null>(
+  const [modalAnchorEl, setModalAnchorEl] = useState<HTMLButtonElement | null>(
     null
   );
   // редакс
@@ -36,16 +38,24 @@ export const ProfileMini: FC<IProfileMiniProps> = ({
     return (
       <Stack direction="row" spacing={1}>
         {/* Никнэйм */}
-        <Typography sx={{ color: theme.palette.info.main }}>
+        <Typography
+          sx={{
+            color: theme.palette.info.main,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           {user.nickname}
         </Typography>
         {/* аватарка */}
-        <AccountCircle
+        <IconButton
           color="info"
-          onClick={(event: MouseEvent<SVGSVGElement>) => {
+          onClick={(event: MouseEvent<HTMLButtonElement>) => {
             setModalAnchorEl(event.currentTarget);
           }}
-        />
+        >
+          <AccountCircle />
+        </IconButton>
         {/* модалка */}
         <Popover
           open={Boolean(modalAnchorEl)}
@@ -84,7 +94,12 @@ export const ProfileMini: FC<IProfileMiniProps> = ({
               variant="outlined"
               size="small"
               onClick={() => {
+                setRefreshToCookies(
+                  "notoken; expires=Thu, 01 Jan 1970 00:00:01 UTC"
+                );
+                dispatch(setRestaurants({ restaurants: null, count: 0 }));
                 dispatch(logout());
+                setModalAnchorEl(null);
               }}
             >
               Выйти

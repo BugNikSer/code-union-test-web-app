@@ -6,9 +6,10 @@ export const searchSlice = createSlice({
   name: "search",
   initialState: {
     keyword: "",
-    nextPage: 1,
+    page: 1,
     perPage: 10,
-    result: [] as IRestaurant[] | null,
+    restaurants: null as IRestaurant[] | null,
+    restaurantsCount: 0,
     error: null as Error | null,
     isLoading: false,
   },
@@ -17,18 +18,23 @@ export const searchSlice = createSlice({
       state.keyword = action.payload;
     },
     setPage: (state, action: PayloadAction<number>) => {
-      state.nextPage = action.payload;
+      state.page = action.payload;
     },
     setPerPage: (state, action: PayloadAction<number>) => {
       state.perPage = action.payload;
     },
-    addResult: (state, action: PayloadAction<IRestaurant[]>) => {
+    setRestaurants: (
+      state,
+      action: PayloadAction<{
+        restaurants: IRestaurant[] | null;
+        count: number;
+      }>
+    ) => {
+      const { restaurants, count } = action.payload;
       state.isLoading = false;
       state.error = null;
-      state.result = state.result
-        ? [...state.result, ...action.payload]
-        : action.payload;
-      state.nextPage = state.nextPage + 1;
+      state.restaurants = restaurants;
+      state.restaurantsCount = count;
     },
     setIsLoading: (state) => {
       state.isLoading = true;
@@ -37,16 +43,18 @@ export const searchSlice = createSlice({
     setError: (state, action: PayloadAction<Error>) => {
       state.isLoading = false;
       state.error = action.payload;
-      state.result = null;
+      state.restaurants = null;
+      state.restaurantsCount = 0;
     },
   },
 });
 
 export interface ISearchSlice {
   keyword: string;
-  nextPage: number;
+  page: number;
   perPage: number;
-  result: IRestaurant[] | null;
+  restaurants: IRestaurant[] | null;
+  restaurantsCount: number;
   error: Error | null;
   isLoading: boolean;
 }
@@ -57,6 +65,6 @@ export const {
   setPerPage,
   setError,
   setIsLoading,
-  addResult,
+  setRestaurants,
 } = searchSlice.actions;
 export default searchSlice.reducer;
