@@ -12,7 +12,6 @@ esbuild
     },
     {
       bundle: true,
-      minify: true,
       entryPoints: ["src/index.tsx"],
       outfile: "www/main.js",
       sourcemap: true,
