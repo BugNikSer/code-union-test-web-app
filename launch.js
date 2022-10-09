@@ -16,6 +16,7 @@ esbuild
       entryPoints: ["src/index.tsx"],
       outfile: "www/main.js",
       sourcemap: true,
+      define: { "process.env.NODE_ENV": '"development"' },
     }
   )
   .then((result) => {
